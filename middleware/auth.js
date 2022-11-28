@@ -18,7 +18,6 @@ async function auth(req, res, next) {
         // console.log("",loggedInUser.state)
         if (loggedInUser != undefined && loggedInUser.id == userId && loggedInUser.state === 'LoggedIn') {
             console.log("user is authenticated");
-            req.userId
             next();
         }
         else {

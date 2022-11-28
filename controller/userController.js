@@ -8,6 +8,8 @@
 
 //https://medium.com/@sourabhbagrecha/implement-email-password-authentication-in-react-using-mongodb-realm-a6dc9123802b
 
+
+
 const Realm = require("realm");
 const jwt_decode = require('jwt-decode');
 const jwt = require('jsonwebtoken')
@@ -90,6 +92,14 @@ const SigningUp = async (req, res) => {
 
 const logout=async(req, res, next)=> {
     try {
+        //  var currentUser = await app.currentUser;
+        // var userObj = {
+        //     id: currentUser.id,
+        //     email: currentUser.profile.email,
+        //     identities: currentUser.identities,
+        //     state: currentUser.state,
+        //     msg: currentUser.id + " is successfully logged out"
+        // }
         await app.allUsers[app.currentUser.id].logOut();
         res.send('logout sucessfully')
       
@@ -113,84 +123,50 @@ const test=(req, res)=> {
 
 
 
-// const logOut = async (req, res) => {
 
-//     try {
-//         req.user.tokens = req.user.tokens.filter((token) => {
-//             return token.token !== req.token
-//         })
-//         await req.user.save()
-//         res.send('sucessfully logouted')
-//     }
-//     catch (error) {
-//         res.status(500).send({
-
-//             message: error.message,
-
-//             error: error.message
-
-//         });
-
-//     }
-// }
-
-
-
-// const logOutAll = async (req, res) => {
-
-//     try {
-//         req.user.tokens = []
-//         await req.user.save()
-//         res.send('sucessfully logouted all')
-//     }
-//     catch (error) {
-//         res.status(500).send({
-
-//             message: error.message,
-
-//             error: error.message
-
-//         });
-
-//     }
-// }
+////// anonymous user login
+const anonymousLogin=async(req, res)=> {
+    // Create an anonymous credential
+    const credentials = Realm.Credentials.anonymous();
+    try {
+        const user = await app.logIn(credentials);
+        var x = user.accessToken;
+        var userObj = {
+            id: user.id,
+            identities: user.identities,
+            state: user.state,
+            refreshToken: user.refreshToken,
+            accessToken: user.accessToken,
+        }
+        console.log("Successfully logged in!", user.id);
+        console.dir(userObj);
+        res.send(userObj);
+    } catch (err) {
+        console.error("Failed to log in", err.message);
+        res.send("failed to log in" + err.message);
+    }
+}
 
 
+const logedInUser=async(req, res)=> {
+    var logedInUser = await app.currentUser;
+    var resultObj = {
+        id: logedInUser.id,
+        email: logedInUser.profile.email,
+        identities: logedInUser.identities,
+        state: logedInUser.state
+    }
+    console.log("Current User" + resultObj);
+    res.send(resultObj);
+}
 
 
-// const getUserDetails = async (req, res) => {
-
-//     try {
-
-//         const user = req.user
-//         res.send(user)
-//     }
-//     catch (error) {
-//         res.status(400).send(error)
-//     }
-// }
-
-
-
-
-
-// const deleteUserDetails = async (req, res) => {
-//     try {
-//         const user = await User.findById(req.params.id)
-//         await user.remove()
-//         res.send('sucessfully deleted')
-
-//     }
-//     catch (error) {
-//         console.error(error);
-//         dashLogger.error(`Error : ${error},Request : ${req.originalUrl}`);
-//         res.render("400");
-//     }
-// }
 
 module.exports = {
     login,
     SigningUp,
     logout,
-    test
+    test,
+    anonymousLogin,
+    logedInUser
 }
