@@ -109,6 +109,31 @@ const logout=async(req, res, next)=> {
     }
 }
 
+const deleteCurrentUser=async(req, res)=> {
+    var deletedUser =await app.deleteUser(app.currentUser)
+    console.log(deletedUser)
+    // var resultObj = {
+    //     id: deletedUser.id,
+    //     email: deletedUser.profile.email,
+    //     identities: deletedUser.identities,
+    //     state: deletedUser.state
+    // }
+    console.log("Current User" + 'resultObj');
+    res.send('deleted');
+}
+const removeCurrentUser=async(req, res)=> {
+    var removeCurrent =await app.removeUser(app.currentUser)
+    console.log(removeCurrent)
+    // var resultObj = {
+    //     id: deletedUser.id,
+    //     email: deletedUser.profile.email,
+    //     identities: deletedUser.identities,
+    //     state: deletedUser.state
+    // }
+    console.log("Current User" + 'resultObj');
+    res.send('removed');
+}
+
 
 const test=(req, res)=> {
 
@@ -168,5 +193,7 @@ module.exports = {
     logout,
     test,
     anonymousLogin,
-    logedInUser
+    logedInUser,
+    deleteCurrentUser,
+    removeCurrentUser
 }
